@@ -10,6 +10,8 @@ from app.decorators.json_validator import validate_with_jsonschema
 # from app.hooks.error import ApiInternalError
 from app.models.book import create_book_json_schema, Book
 
+from app.hooks.error import ApiInternalError
+
 books_bp = Blueprint('books_blueprint', url_prefix='/books')
 # books_bp_id = Blueprint('books_blueprint', url_prefix='/books/<id>')
 # books_update_id = Blueprint('books_blueprint', url_prefix='/books/<id>')
@@ -21,12 +23,12 @@ _db = MongoDB()
 @books_bp.route('/')
 async def get_all_books(request):
     # # TODO: use cache to optimize api
-    # async with request.app.ctx.redis as r:
-    # books_cache = await get_cache(r, CacheConstants.all_books)
-    # if books is None:
-    #     book_objs = _db.get_books()
-    #     books = [book.to_dict() for book in book_objs]
-    #     await set_cache(r, CacheConstants.all_books, books)
+    async with request.app.ctx.redis as r:
+        books_cache = await get_cache(r, CacheConstants.all_books)
+        if books_cache is None:
+            book_objs = _db.get_books()
+            books = [book.to_dict() for book in book_objs]
+            await set_cache(r, CacheConstants.all_books, books)
 
     book_objs = _db.get_books()
     books = [book.to_dict() for book in book_objs]
@@ -38,14 +40,14 @@ async def get_all_books(request):
 
 @books_bp.route('/<id>',methods={'GET'})
 async def get_books_id(request, id):
-    # # TODO: use cache to optimize api
-    # async with request.app.ctx.redis as r:
-    #     books = await get_cache(r, CacheConstants.all_books)
-    #     if books is None:
-    #         book_objs = _db.get_books()
-    #         books = [book.to_dict() for book in book_objs]
-    #         await set_cache(r, CacheConstants.all_books, books)
-    #
+    # TODO: use cache to optimize api
+    async with request.app.ctx.redis as r:
+        books = await get_cache(r, CacheConstants.all_books)
+        if books is None:
+            book_objs = _db.get_books()
+            books = [book.to_dict() for book in book_objs]
+            await set_cache(r, CacheConstants.all_books, books)
+
     book_objs = _db.get_book_id(id)
     if(book_objs):
         return json({
@@ -62,12 +64,12 @@ async def get_books_id(request, id):
 @books_bp.route('<id>',methods={'PUT'})
 async def update_books_id(request, id):
     # # TODO: use cache to optimize api
-    # async with request.app.ctx.redis as r:
-    #     books = await get_cache(r, CacheConstants.all_books)
-    #     if books is None:
-    #         book_objs = _d    b.get_books()
-    #         books = [book.to_dict() for book in book_objs]
-    #         await set_cache(r, CacheConstants.all_books, books)
+    async with request.app.ctx.redis as r:
+        books = await get_cache(r, CacheConstants.all_books)
+        if books is None:
+            book_objs = _db.get_books()
+            books = [book.to_dict() for book in book_objs]
+            await set_cache(r, CacheConstants.all_books, books)
     body = request.json
 
     book = Book(id).from_dict(body)
@@ -90,12 +92,12 @@ async def update_books_id(request, id):
 @books_bp.route('<id>',methods={'DELETE'})
 async def delete_books_id(request, id):
     # # TODO: use cache to optimize api
-    # async with request.app.ctx.redis as r:
-    #     books = await get_cache(r, CacheConstants.all_books)
-    #     if books is None:
-    #         book_objs = _db.get_books()
-    #         books = [book.to_dict() for book in book_objs]
-    #         await set_cache(r, CacheConstants.all_books, books)
+    async with request.app.ctx.redis as r:
+        books = await get_cache(r, CacheConstants.all_books)
+        if books is None:
+            book_objs = _db.get_books()
+            books = [book.to_dict() for book in book_objs]
+            await set_cache(r, CacheConstants.all_books, books)
 
     book_objs = _db.delete_book(id)
     if(book_objs):
@@ -122,8 +124,8 @@ async def create_book(request, username=None):
     # # TODO: Save book to database
     inserted = _db.add_book(book)
 
-    # if not inserted:
-    #     raise ApiInternalError('Fail to create book')
+    if not inserted:
+        raise ApiInternalError('Fail to create book')
 
     # TODO: Update cache
 
