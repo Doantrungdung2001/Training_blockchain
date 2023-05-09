@@ -3,6 +3,7 @@ import datetime
 
 from app.constants.mongodb_constants import MongoCollections
 from app.models.book import Book
+from app.models.user import User
 from app.utils.logger_utils import get_logger
 from config import MongoDBConfig
 
@@ -19,6 +20,7 @@ class MongoDB:
         self.db = self.client[MongoDBConfig.DATABASE]
 
         self._books_col = self.db[MongoCollections.books]
+        self._users_col = self.db[MongoCollections.users]
 
         print("Connect is done!!!")
         print(self.client.list_database_names())
@@ -77,5 +79,25 @@ class MongoDB:
             logger.exception(ex)
         return None
 
-# # newBook = Book('0009')
-# db = MongoDB().add_book(newBook)
+    def create_user(self, user: User):
+        try:
+            inserted_user = self._users_col.insert_one(user.to_dict())
+            return inserted_user
+        except Exception as ex:
+            logger.exception(ex)
+        return None
+
+    def get_user_id(self, id: str):
+        try:
+            # get_doc = self._books_col.find_one({"_id": id})
+            # return get_doc
+            if (user := self._users_col.find_one({"_id": id})):
+                return user
+        except Exception as ex:
+            logger.exception(ex)
+        return []
+
+    # # newBook = Book('0009')
+    # db = MongoDB().add_book(newBook)
+
+
