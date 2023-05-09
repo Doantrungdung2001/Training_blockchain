@@ -29,3 +29,21 @@ async def create_user(request):
         'users': user.to_dict(),
     })
 
+
+@user_bp.route('/', methods={'GET'})
+@validate_with_jsonschema(create_user_json_schema)  # To validate request body
+async def login_user(request):
+    body = request.json
+
+    user = User().from_dict(body)
+    login = _db.get_user(user.username,user.password)
+    print(login)
+    if(login == True):
+        return json({
+            'status': 'login success!!!!!',
+            'users': user.to_dict(),
+        })
+    else:
+        return json({
+            'status': 'login fail'
+        })

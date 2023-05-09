@@ -87,15 +87,13 @@ class MongoDB:
             logger.exception(ex)
         return None
 
-    def get_user_id(self, id: str):
+    def get_user(self, username: str, password:str):
         try:
-            # get_doc = self._books_col.find_one({"_id": id})
-            # return get_doc
-            if (user := self._users_col.find_one({"_id": id})):
-                return user
+            if (user := self._users_col.find_one({"username": username},{"password": password})) is not None:
+                return True
         except Exception as ex:
             logger.exception(ex)
-        return []
+        return False
 
     # # newBook = Book('0009')
     # db = MongoDB().add_book(newBook)
