@@ -82,18 +82,18 @@ class MongoDB:
     def create_user(self, user: User):
         try:
             inserted_user = self._users_col.insert_one(user.to_dict())
-            return inserted_user
+            return user
         except Exception as ex:
             logger.exception(ex)
         return None
 
     def get_user(self, username: str, password:str):
         try:
-            if (user := self._users_col.find_one({"username": username},{"password": password})) is not None:
-                return True
+            if (user := self._users_col.find_one({"username": username,"password": password})) is not None:
+                return user
         except Exception as ex:
             logger.exception(ex)
-        return False
+        return None
 
     # # newBook = Book('0009')
     # db = MongoDB().add_book(newBook)

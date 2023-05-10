@@ -9,7 +9,7 @@ from app.databases.redis_cached import get_cache, set_cache
 from app.decorators.json_validator import validate_with_jsonschema
 # from app.hooks.error import ApiInternalError
 from app.models.book import create_book_json_schema, Book
-
+from app.decorators.auth import protected
 from app.hooks.error import ApiInternalError
 
 books_bp = Blueprint('books_blueprint', url_prefix='/books')
@@ -112,7 +112,7 @@ async def delete_books_id(request, id):
 
 
 @books_bp.route('/', methods={'POST'})
-# @protected  # TODO: Authenticate
+@protected  # TODO: Authenticate
 @validate_with_jsonschema(create_book_json_schema)  # To validate request body
 async def create_book(request, username=None):
     body = request.json
