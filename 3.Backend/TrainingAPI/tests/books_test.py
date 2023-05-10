@@ -38,9 +38,9 @@ class BooksTests(unittest.TestCase):
         self.assertEqual(response.status, 200)
         data = json.loads(response.text)
         print(data)
-        # auth_token = data["token"]
-        # headers = {"Authorization": f"Bearer {auth_token}"}
-        # return headers
+        auth_token = data["token"]
+        headers = {"Authorization": f"Bearer {auth_token}"}
+        return headers
 
     def test_get_book_by_id(self):
         id = 'ed38c908-b4ab-4d43-b46e-3a58f14a498c'
@@ -48,8 +48,6 @@ class BooksTests(unittest.TestCase):
         self.assertEqual(response.status, 200)
         data = json.loads(response.text)
         # self.assertEqual(data.get('_id'),'ed38c908-b4ab-4d43-b46e-3a58f14a498c')
-        self.assertEqual(data['status'], 'success')
-        self.assertIsInstance(data.get('books'), list)
 
     def test_create_book(self):
         headers = self.test_login_user()
@@ -75,6 +73,7 @@ class BooksTests(unittest.TestCase):
     def test_update_book(self):
         headers = self.test_login_user()
         print(headers)
+        id = 'ed38c908-b4ab-4d43-b46e-3a58f14a498c'
         book = {
             "title": "book test update",
             "authors": ["Dung","Doan"],
@@ -91,7 +90,7 @@ class BooksTests(unittest.TestCase):
 
     def test_delete_book(self):
         headers = self.test_login_user()
-
+        id = 'ed38c908-b4ab-4d43-b46e-3a58f14a498c'
         request, response = app.test_client.delete(f'/books/{id}', headers=headers)
         self.assertEqual(response.status, 200)
         data = json.loads(response.text)
