@@ -62,6 +62,7 @@ async def get_books_id(request, id):
 
 
 @books_bp.route('<id>',methods={'PUT'})
+@protected  # TODO: Authenticate
 async def update_books_id(request, id):
     # # TODO: use cache to optimize api
     async with request.app.ctx.redis as r:
@@ -90,6 +91,7 @@ async def update_books_id(request, id):
         })
 
 @books_bp.route('<id>',methods={'DELETE'})
+@protected  # TODO: Authenticate
 async def delete_books_id(request, id):
     # # TODO: use cache to optimize api
     async with request.app.ctx.redis as r:
