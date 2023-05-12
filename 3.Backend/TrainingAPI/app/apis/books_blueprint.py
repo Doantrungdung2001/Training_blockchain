@@ -30,8 +30,8 @@ async def get_all_books(request):
             books = [book.to_dict() for book in book_objs]
             await set_cache(r, CacheConstants.all_books, books)
 
-    book_objs = _db.get_books()
-    books = [book.to_dict() for book in book_objs]
+    # book_objs = _db.get_books()
+    # books = [book.to_dict() for book in book_objs]
     number_of_books = len(books)
     return json({
         'n_books': number_of_books,
@@ -48,16 +48,25 @@ async def get_books_id(request, id):
             books = [book.to_dict() for book in book_objs]
             await set_cache(r, CacheConstants.all_books, books)
 
-    book_objs = _db.get_book_id(id)
-    if(book_objs):
-        return json({
-            'status': 'success',
-            'books': book_objs
-        })
-    else:
-        return json({
-            'status' : 'fail'
-        })
+        if (books):
+            return json({
+                'status': 'success',
+                'books': books
+            })
+        else:
+            return json({
+                'status': 'fail'
+            })
+    # book_objs = _db.get_book_id(id)
+    # if(book_objs):
+    #     return json({
+    #         'status': 'success',
+    #         'books': book_objs
+    #     })
+    # else:
+    #     return json({
+    #         'status' : 'fail'
+    #     })
 
 
 
@@ -71,19 +80,20 @@ async def update_books_id(request, id,username=None):
             book_objs = _db.get_books()
             books = [book.to_dict() for book in book_objs]
             await set_cache(r, CacheConstants.all_books, books)
+
     body = request.json
 
-    book = Book(id).from_dict(body)
+    books = Book(id).from_dict(body)
 
     # return json({
     #     'book': book.to_dict()
     # })
-    book_objs = _db.update_book(id,book)
+    book_objs = _db.update_book(id,books)
 
     if(book_objs):
         return json({
             'status': 'success',
-            'books': book.to_dict()
+            'books': books.to_dict()
         })
     else:
         return json({
@@ -101,8 +111,8 @@ async def delete_books_id(request, id,username=None):
             books = [book.to_dict() for book in book_objs]
             await set_cache(r, CacheConstants.all_books, books)
 
-    book_objs = _db.delete_book(id)
-    if(book_objs):
+    books = _db.delete_book(id)
+    if(books):
         return json({
             'status': 'success',
         })

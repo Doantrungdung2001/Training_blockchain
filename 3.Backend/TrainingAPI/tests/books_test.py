@@ -17,27 +17,28 @@ class BooksTests(unittest.TestCase):
 
     def test_register_user(self):
         user = {
-            "username": "trungdung",
+            "username": "trungdung12",
             "password": "1234567"
         }
 
         request, response = app.test_client.post('/user/register',json = user)
         self.assertEqual(response.status, 200)
         data = json.loads(response.text)
-        # if(data['status'],'login success'):
-        # auth_token = data["token"]
-        # headers = {"Authorization": f"Bearer {auth_token}"}
-        # return headers
+        self.assertEqual(data['status'], 'success')
+        auth_token = data["token"]
+        headers = {"Authorization": f"Bearer {auth_token}"}
+        return headers
 
     def test_login_user(self):
         user = {
-            "username": "trungdung",
+            "username": "trungdung12",
             "password": "1234567"
         }
         request, response = app.test_client.post('/user/login',json = user)
         self.assertEqual(response.status, 200)
         data = json.loads(response.text)
         print(data)
+        self.assertEqual(data['status'], 'loggin success')
         auth_token = data["token"]
         headers = {"Authorization": f"Bearer {auth_token}"}
         return headers
