@@ -30,8 +30,8 @@ async def get_all_books(request):
             books = [book.to_dict() for book in book_objs]
             await set_cache(r, CacheConstants.all_books, books)
 
-    # book_objs = _db.get_books()
-    # books = [book.to_dict() for book in book_objs]
+    book_objs = _db.get_books()
+    books = [book.to_dict() for book in book_objs]
     number_of_books = len(books)
     return json({
         'n_books': number_of_books,
